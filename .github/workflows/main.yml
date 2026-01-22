@@ -33,12 +33,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build APK with Gradle
+      - name: Build APK with Fixed Memory
         run: |
           cd android
           chmod +x gradlew
-          # Sabse zaroori: Cache clean karke fresh build start karna
-          ./gradlew clean assembleDebug --no-daemon --stacktrace
+          # Memory limits set kar rahe hain taaki "Jar file" error na aaye
+          export _JAVA_OPTIONS="-Xmx2048m -Xms512m"
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
