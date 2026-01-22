@@ -20,16 +20,21 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Build with Gradle
+    - name: Build APK with Auto-Path
       run: |
-        # Ye command khud folder dhoond legi
-        GRADLE_PATH=$(find . -name gradlew)
-        chmod +x $GRADLE_PATH
-        cd $(dirname $GRADLE_PATH)
+        # Ye command poore project mein gradlew file dhoondegi
+        GRADLEW_PATH=$(find . -name gradlew | head -n 1)
+        if [ -z "$GRADLEW_PATH" ]; then
+          echo "Error: gradlew file nahi mili. Kya aapne Android project upload kiya hai?"
+          exit 1
+        fi
+        chmod +x "$GRADLEW_PATH"
+        cd $(dirname "$GRADLEW_PATH")
         ./gradlew assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-debug
+        name: my-android-app
         path: "**/build/outputs/apk/debug/*.apk"
+        
