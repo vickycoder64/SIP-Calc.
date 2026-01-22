@@ -20,17 +20,16 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-      working-directory: SIP-Calc  # <-- Aapke folder ka naam
-
     - name: Build with Gradle
-      run: ./gradlew assembleDebug
-      working-directory: SIP-Calc  # <-- Aapke folder ka naam
+      run: |
+        # Ye command khud folder dhoond legi
+        GRADLE_PATH=$(find . -name gradlew)
+        chmod +x $GRADLE_PATH
+        cd $(dirname $GRADLE_PATH)
+        ./gradlew assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: SIP-Calc/app/build/outputs/apk/debug/*.apk
-        
+        path: "**/build/outputs/apk/debug/*.apk"
