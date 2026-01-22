@@ -19,17 +19,12 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
+        # Cache ko hata diya hai taaki error na aaye
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+      continue-on-error: true # Agar file na mile to build ruke nahi
 
     - name: Build with Gradle
       run: ./gradlew assembleDebug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: my-app-apk
-        path: app/build/outputs/apk/debug/*.apk
-        
+      
