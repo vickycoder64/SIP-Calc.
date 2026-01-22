@@ -37,8 +37,8 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          # Gradle cache issue fix karne ke liye clean build
-          ./gradlew clean assembleDebug --no-daemon
+          # Sabse zaroori: Cache clean karke fresh build start karna
+          ./gradlew clean assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
