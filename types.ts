@@ -15,8 +15,3 @@ export interface YearlyBreakdown {
   invested: number;
   value: number;
 }
-
-export interface InsightRequest {
-  inputs: SipInputs;
-  results: SipResult;
-}

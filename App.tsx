@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Calculator, TrendingUp, Sparkles, Smartphone, Github, Loader2 } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Calculator, TrendingUp, Github } from 'lucide-react';
 import { InputSlider } from './components/InputSlider';
 import { ResultsCard } from './components/ResultsCard';
 import { Charts } from './components/Charts';
 import { GitHubWorkflowModal } from './components/GitHubWorkflowModal';
-import { generateFinancialInsights } from './services/geminiService';
 import { SipInputs, SipResult, YearlyBreakdown } from './types';
 
 const App: React.FC = () => {
@@ -15,8 +14,6 @@ const App: React.FC = () => {
     timePeriod: 10,
   });
 
-  const [aiInsight, setAiInsight] = useState<string | null>(null);
-  const [loadingAi, setLoadingAi] = useState(false);
   const [showWorkflowModal, setShowWorkflowModal] = useState(false);
 
   // Calculations
@@ -58,21 +55,6 @@ const App: React.FC = () => {
   // Handlers
   const handleInputChange = (key: keyof SipInputs, value: number) => {
     setInputs((prev) => ({ ...prev, [key]: value }));
-    // Reset AI insight when inputs change significantly to encourage refreshing, 
-    // but maybe keep it for minor tweaks. For now, clear it to keep context fresh.
-    if (Math.abs(value - inputs[key]) > (key === 'expectedReturn' ? 1 : 100)) {
-        setAiInsight(null);
-    }
-  };
-
-  const fetchInsights = async () => {
-    setLoadingAi(true);
-    const insight = await generateFinancialInsights({
-      inputs,
-      results: calculateSip
-    });
-    setAiInsight(insight);
-    setLoadingAi(false);
   };
 
   return (
@@ -136,47 +118,6 @@ const App: React.FC = () => {
                 unit="Yr"
                 onChange={(val) => handleInputChange('timePeriod', val)}
               />
-            </div>
-
-            {/* AI Insights Card */}
-            <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Sparkles className="w-24 h-24" />
-              </div>
-              
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="w-5 h-5 text-yellow-300" />
-                  <h3 className="font-bold text-lg">AI Financial Advisor</h3>
-                </div>
-                
-                {!aiInsight ? (
-                  <div className="text-indigo-100 text-sm">
-                    <p className="mb-4">Get personalized insights about your investment plan powered by Gemini models.</p>
-                    <button 
-                      onClick={fetchInsights}
-                      disabled={loadingAi}
-                      className="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white font-semibold py-2 px-4 rounded-lg transition-all flex items-center justify-center gap-2"
-                    >
-                      {loadingAi ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Analyze Plan'}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="animate-in fade-in duration-500">
-                    <div className="prose prose-invert prose-sm text-indigo-50 leading-relaxed mb-4">
-                      {aiInsight.split('\n').map((line, i) => (
-                        <p key={i} className="mb-2">{line}</p>
-                      ))}
-                    </div>
-                    <button 
-                      onClick={fetchInsights}
-                      className="text-xs text-indigo-200 hover:text-white underline decoration-dashed underline-offset-4"
-                    >
-                      Refresh Analysis
-                    </button>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
 
