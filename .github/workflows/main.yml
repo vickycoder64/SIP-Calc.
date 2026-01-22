@@ -19,12 +19,18 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        # Cache ko hata diya hai taaki error na aaye
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-      continue-on-error: true # Agar file na mile to build ruke nahi
+      working-directory: SIP-Calc  # <-- Aapke folder ka naam
 
     - name: Build with Gradle
       run: ./gradlew assembleDebug
-      
+      working-directory: SIP-Calc  # <-- Aapke folder ka naam
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug
+        path: SIP-Calc/app/build/outputs/apk/debug/*.apk
+        
